@@ -303,7 +303,7 @@ sonorite = true;
 delay(5000); 
 
 totaux[i]++;
-String info = "@TOTAL ECH #" + String(i+1) + ": "  + String(totaux[i]);
+String info = "@TOTAL ECH #" + String(i+1) + ": "  + String(totaux[i]) + " ";
 Serial.println(info);
 //Serial.println(TOTAUX[i]);
 //erreurEnCours = false;
