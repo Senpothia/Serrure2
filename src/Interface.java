@@ -129,7 +129,7 @@ public class Interface extends javax.swing.JFrame {
 
     public void connect() {
 
-        System.out.println("Terminal.btnConnexionActionPerformed()");
+      //  System.out.println("Terminal.btnConnexionActionPerformed()");
         try {
             SerialPort[] ports = SerialPort.getCommPorts();
             portComm = ports[portSelection.getSelectedIndex()];
@@ -178,12 +178,12 @@ public class Interface extends javax.swing.JFrame {
                     int numRead = portComm.readBytes(readBuffer,
                             readBuffer.length);
 
-                    System.out.print("Read " + numRead + " bytes -");
+                //    System.out.print("Read " + numRead + " bytes -");
 
                     //Convert bytes to String
                     inputLine = new String(readBuffer, StandardCharsets.UTF_8);
                     infoText.setText(inputLine);
-                    System.out.println("Received -> " + inputLine);
+               //     System.out.println("Received -> " + inputLine);
 
                     boolean isCompteur;
                     boolean isActifs;
@@ -197,8 +197,8 @@ public class Interface extends javax.swing.JFrame {
                         String[] recept = inputLine.split(" ");
                         String compteur = recept[3];
                         String ech = recept[2];
-                        System.out.println("num echantillon: " + recept[2]);
-                        System.out.println("Compteur: " + recept[3]);
+                      //  System.out.println("num echantillon: " + recept[2]);
+                      //  System.out.println("Compteur: " + recept[3]);
 
                         if (ech.equals("#1:")) {
 
@@ -298,7 +298,7 @@ public class Interface extends javax.swing.JFrame {
        
         try {
 
-            System.out.println("Interface.envoyerData(), données: " + dataToSend);
+        //    System.out.println("Interface.envoyerData(), données: " + dataToSend);
             outputStream.write(dataToSend.getBytes());
 
         } catch (IOException e) {
@@ -834,7 +834,7 @@ public class Interface extends javax.swing.JFrame {
                         config = config + "0";
                     }
 
-                    System.out.println("Configuration de test: " + config);
+                   // System.out.println("Configuration de test: " + config);
                     envoyerData(config);
 
                     boolean timeout = false;
@@ -1033,7 +1033,7 @@ public class Interface extends javax.swing.JFrame {
         if (!test_on) {
 
             nomFichier = fileNameBox.getText();
-            System.out.println("Nom de fichier choisi: " + nomFichier);
+          //  System.out.println("Nom de fichier choisi: " + nomFichier);
             int showOpenDialog = SelectFichier.showOpenDialog(this);
 
             if (nomFichier.equals("") || nomFichier.equals("<nom fichier>")) {
@@ -1205,8 +1205,8 @@ public class Interface extends javax.swing.JFrame {
 
                 Repertoire = SelectFichier.getSelectedFile();
                 nomFichier = Repertoire + "\\" + nomFichier + ".csv";
-                System.out.println(Repertoire);
-                System.out.println("nom fichier complet: " + nomFichier);
+              //  System.out.println(Repertoire);
+              //  System.out.println("nom fichier complet: " + nomFichier);
                 initFichier();
                 fileNameBox.setVisible(false);
                 btnValidationConfig.setVisible(false);
