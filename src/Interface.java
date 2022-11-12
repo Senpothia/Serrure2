@@ -182,7 +182,7 @@ public class Interface extends javax.swing.JFrame {
 
                     //Convert bytes to String
                     inputLine = new String(readBuffer, StandardCharsets.UTF_8);
-
+                    infoText.setText(inputLine);
                     System.out.println("Received -> " + inputLine);
 
                     boolean isCompteur;
@@ -863,7 +863,7 @@ public class Interface extends javax.swing.JFrame {
                     btnStart.setText("STOP");
                     btnPause.setVisible(true);
                     btnPause.setText("PAUSE");
-                    // jTextArea1.setText("Le test est lancé");
+                    infoText.setText("Le test est lancé");
                     //**************************
                 }
 
@@ -926,7 +926,7 @@ public class Interface extends javax.swing.JFrame {
             jLabel5.setVisible(true);
             btnPause.setVisible(true);
             btnPause.setText("RELANCER");
-            //  jTextArea1.setText("Test en pause");
+            infoText.setText("Test en pause");
             envoyerData(pause);
 
         } else {
@@ -943,7 +943,7 @@ public class Interface extends javax.swing.JFrame {
             pictoSequence.setVisible(false);
             btnPause.setVisible(true);
             btnPause.setText("PAUSE");
-            //jTextArea1.setText("Reprise du test après interruption!");
+            infoText.setText("Reprise du test après interruption!");
             envoyerData(marche);
 
         }
