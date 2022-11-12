@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Enumeration;
@@ -48,9 +49,6 @@ public class Interface extends javax.swing.JFrame {
     private boolean test_pause = false;
     private boolean arret_valide = false;
 
-    //private OutputStream output = null;
-    //SerialPort serialPort;
-    //Variables de connexion
     SerialPort portComm;
     OutputStream outputStream;
 
@@ -100,22 +98,22 @@ public class Interface extends javax.swing.JFrame {
         //connect();
 
         setTitle("INTERFACE DE TEST POUR SERRURES DX200I");
-        jLabel3.setIcon(new ImageIcon(imageOff));
+        pictoSequence2.setIcon(new ImageIcon(imageOff));
         //jLabel3.setIcon(new ImageIcon(imageVertOff));
         btnStart.setText("START");
         btnPause.setVisible(false);
-        jLabel6.setVisible(false);
+        pictoSequence.setVisible(false);
         infoText.setText("Configurez le test avant lancement et demandez une connexion");
-        jLabel8.setText("0");
-        jLabel2.setText("0");
-        jLabel4.setText("0");
+        compteurEch1.setText("0");
+        compteurEch2.setText("0");
+        compteurEch3.setText("0");
         statutsEch1.setSelected(false);
         statutEch2.setSelected(false);
         statutEch3.setSelected(false);
-        jTextField4.setVisible(false);
+        fileNameBox.setVisible(false);
         btnValidationConfig.setVisible(false);
-        jTextField5.setVisible(false);
-        jTextField5.setVisible(false);
+        periodeSauvegarde.setVisible(false);
+        periodeSauvegarde.setVisible(false);
         bntAnnulationConfig.setVisible(false);
         btnValidationConfig.setVisible(false);
         // jComboBox1.removeAllItems();
@@ -131,43 +129,6 @@ public class Interface extends javax.swing.JFrame {
 
     public void connect() {
 
-        /*
-        CommPortIdentifier portID = null;
-        Enumeration portEnum = CommPortIdentifier.getPortIdentifiers();
-
-        while (portEnum.hasMoreElements()) {
-            CommPortIdentifier actualPortID = (CommPortIdentifier) portEnum.nextElement();
-            if (PORT.equals(actualPortID.getName())) {
-                portID = actualPortID;
-                break;
-            }
-        }
-
-        if (portID == null) {
-            montrerError("Connexion impossible. Vérifier les paramètres de connexion");
-
-        }
-
-        try {
-            serialPort = (SerialPort) portID.open(this.getClass().getName(), TIMEOUT);
-            //Paramètre port série
-
-            serialPort.setSerialPortParams(DATA_RATE, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
-
-            input = new BufferedReader(new InputStreamReader(serialPort.getInputStream()));
-            output = serialPort.getOutputStream();
-
-            // input = new BufferedReader(new InputStreamReader(serialPort.getInputStream()));
-            serialPort.addEventListener(this);
-            serialPort.notifyOnDataAvailable(true);
-            jTextArea1.setText("Connexion réussie!");
-
-        } catch (Exception e) {
-            montrerError(e.getMessage());
-            //System.exit(ERROR);
-
-        }
-         */
         System.out.println("Terminal.btnConnexionActionPerformed()");
         try {
             SerialPort[] ports = SerialPort.getCommPorts();
@@ -176,6 +137,7 @@ public class Interface extends javax.swing.JFrame {
             portComm.setNumDataBits(8);
             portComm.setParity(0);
             portComm.setNumStopBits(1);
+            portComm.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING, 1000, 0);
             portComm.openPort();
 
             if (portComm.isOpen()) {
@@ -209,18 +171,20 @@ public class Interface extends javax.swing.JFrame {
                     return;
                 }
 
-                /*
-                byte[] newData = new byte[portComm.bytesAvailable()];
-                int numRead = portComm.readBytes(newData, newData.length);
-                System.out.println("Read " + numRead + " bytes:" + new String(newData, StandardCharsets.UTF_8));
-                texteReception.setText(new String(newData, StandardCharsets.UTF_8));
-                 */
                 try {
 
-                    System.out.println("Réception message");
-                    inputLine = input.readLine();
-                    System.out.println(inputLine);
-                    infoText.setText(inputLine);
+                    byte[] readBuffer = new byte[100];
+
+                    int numRead = portComm.readBytes(readBuffer,
+                            readBuffer.length);
+
+                    System.out.print("Read " + numRead + " bytes -");
+
+                    //Convert bytes to String
+                    inputLine = new String(readBuffer, StandardCharsets.UTF_8);
+
+                    System.out.println("Received -> " + inputLine);
+
                     boolean isCompteur;
                     boolean isActifs;
                     boolean isArret;
@@ -238,20 +202,20 @@ public class Interface extends javax.swing.JFrame {
 
                         if (ech.equals("#1:")) {
 
-                            jLabel8.setText(compteur);
+                            compteurEch1.setText(compteur);
                             compteur1 = Long.parseLong(compteur);
 
                         }
 
                         if (ech.equals("#2:")) {
 
-                            jLabel2.setText(compteur);
+                            compteurEch2.setText(compteur);
                             compteur2 = Long.parseLong(compteur);
                         }
 
                         if (ech.equals("#3:")) {
 
-                            jLabel4.setText(compteur);
+                            compteurEch3.setText(compteur);
                             compteur3 = Long.parseLong(compteur);
 
                         }
@@ -278,8 +242,8 @@ public class Interface extends javax.swing.JFrame {
 
                             actifs[0] = false;
                             if (statutsEch1.isSelected()) {
-                                jLabel8.setForeground(Color.RED);
-                                jLabel8.setText(String.valueOf(compteur1));
+                                compteurEch1.setForeground(Color.RED);
+                                compteurEch1.setText(String.valueOf(compteur1));
                             }
 
                         } else {
@@ -291,8 +255,8 @@ public class Interface extends javax.swing.JFrame {
 
                             actifs[1] = false;
                             if (statutEch2.isSelected()) {
-                                jLabel2.setForeground(Color.RED);
-                                jLabel2.setText(String.valueOf(compteur2));
+                                compteurEch2.setForeground(Color.RED);
+                                compteurEch2.setText(String.valueOf(compteur2));
                             }
 
                         } else {
@@ -304,8 +268,8 @@ public class Interface extends javax.swing.JFrame {
 
                             actifs[2] = false;
                             if (statutEch3.isSelected()) {
-                                jLabel4.setForeground(Color.RED);
-                                jLabel4.setText(String.valueOf(compteur3));
+                                compteurEch3.setForeground(Color.RED);
+                                compteurEch3.setText(String.valueOf(compteur3));
                             }
 
                         } else {
@@ -330,18 +294,11 @@ public class Interface extends javax.swing.JFrame {
 
     private void envoyerData(String dataToSend) {
 
-        /*
-        try {
-            output.write(data.getBytes());
-        } catch (Exception e) {
-            montrerError("Connexion impossible!");
-            System.exit(ERROR);
-        }
-         */
         outputStream = portComm.getOutputStream();
-        //  String dataToSend = textEmission.getText();
+       
         try {
 
+            System.out.println("Interface.envoyerData(), données: " + dataToSend);
             outputStream.write(dataToSend.getBytes());
 
         } catch (IOException e) {
@@ -390,7 +347,7 @@ public class Interface extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         SelectFichier = new javax.swing.JFileChooser();
-        jLabel1 = new javax.swing.JLabel();
+        titre = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         infoText = new javax.swing.JTextArea();
         jPanel1 = new javax.swing.JPanel();
@@ -398,30 +355,30 @@ public class Interface extends javax.swing.JFrame {
         portSelection = new javax.swing.JComboBox<>();
         jPanel2 = new javax.swing.JPanel();
         statutsEch1 = new javax.swing.JCheckBox();
-        jLabel2 = new javax.swing.JLabel();
+        compteurEch2 = new javax.swing.JLabel();
         statutEch3 = new javax.swing.JCheckBox();
-        jLabel4 = new javax.swing.JLabel();
+        compteurEch3 = new javax.swing.JLabel();
         statutEch2 = new javax.swing.JCheckBox();
-        jButton1 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton7 = new javax.swing.JButton();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
-        jButton9 = new javax.swing.JButton();
-        jButton10 = new javax.swing.JButton();
-        jButton11 = new javax.swing.JButton();
-        jLabel8 = new javax.swing.JLabel();
+        ResetEch1 = new javax.swing.JButton();
+        resetEch2 = new javax.swing.JButton();
+        resetEch3 = new javax.swing.JButton();
+        setBoxEch1 = new javax.swing.JTextField();
+        setBoxEch2 = new javax.swing.JTextField();
+        setBoxEch3 = new javax.swing.JTextField();
+        setEch1 = new javax.swing.JButton();
+        setEch2 = new javax.swing.JButton();
+        setEch3 = new javax.swing.JButton();
+        compteurEch1 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         btnStart = new javax.swing.JButton();
-        jLabel3 = new javax.swing.JLabel();
+        pictoSequence2 = new javax.swing.JLabel();
         btnPause = new javax.swing.JButton();
-        jLabel6 = new javax.swing.JLabel();
-        jButton8 = new javax.swing.JButton();
-        jButton12 = new javax.swing.JButton();
-        jTextField4 = new javax.swing.JTextField();
+        pictoSequence = new javax.swing.JLabel();
+        btnFermeture = new javax.swing.JButton();
+        btnSauvegardes = new javax.swing.JButton();
+        fileNameBox = new javax.swing.JTextField();
         btnValidationConfig = new javax.swing.JButton();
-        jTextField5 = new javax.swing.JTextField();
+        periodeSauvegarde = new javax.swing.JTextField();
         bntAnnulationConfig = new javax.swing.JButton();
 
         jButton4.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
@@ -442,8 +399,8 @@ public class Interface extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 48)); // NOI18N
-        jLabel1.setText("TEST DX200I");
+        titre.setFont(new java.awt.Font("Tahoma", 1, 48)); // NOI18N
+        titre.setText("TEST DX200I");
 
         infoText.setColumns(20);
         infoText.setRows(5);
@@ -489,9 +446,9 @@ public class Interface extends javax.swing.JFrame {
             }
         });
 
-        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(51, 51, 255));
-        jLabel2.setText("jLabel2");
+        compteurEch2.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        compteurEch2.setForeground(new java.awt.Color(51, 51, 255));
+        compteurEch2.setText("jLabel2");
 
         statutEch3.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         statutEch3.setText("Echantillon3");
@@ -501,9 +458,9 @@ public class Interface extends javax.swing.JFrame {
             }
         });
 
-        jLabel4.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(51, 51, 255));
-        jLabel4.setText("jLabel2");
+        compteurEch3.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        compteurEch3.setForeground(new java.awt.Color(51, 51, 255));
+        compteurEch3.setText("jLabel2");
 
         statutEch2.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         statutEch2.setSelected(true);
@@ -514,63 +471,63 @@ public class Interface extends javax.swing.JFrame {
             }
         });
 
-        jButton1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jButton1.setForeground(new java.awt.Color(255, 0, 51));
-        jButton1.setText("Reset");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        ResetEch1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        ResetEch1.setForeground(new java.awt.Color(255, 0, 51));
+        ResetEch1.setText("Reset");
+        ResetEch1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                ResetEch1ActionPerformed(evt);
             }
         });
 
-        jButton3.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jButton3.setForeground(new java.awt.Color(255, 0, 51));
-        jButton3.setText("Reset");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        resetEch2.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        resetEch2.setForeground(new java.awt.Color(255, 0, 51));
+        resetEch2.setText("Reset");
+        resetEch2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                resetEch2ActionPerformed(evt);
             }
         });
 
-        jButton7.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jButton7.setForeground(new java.awt.Color(255, 0, 51));
-        jButton7.setText("Reset");
-        jButton7.addActionListener(new java.awt.event.ActionListener() {
+        resetEch3.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        resetEch3.setForeground(new java.awt.Color(255, 0, 51));
+        resetEch3.setText("Reset");
+        resetEch3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton7ActionPerformed(evt);
+                resetEch3ActionPerformed(evt);
             }
         });
 
-        jButton9.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jButton9.setForeground(new java.awt.Color(255, 0, 0));
-        jButton9.setText("Set");
-        jButton9.addActionListener(new java.awt.event.ActionListener() {
+        setEch1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        setEch1.setForeground(new java.awt.Color(255, 0, 0));
+        setEch1.setText("Set");
+        setEch1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton9ActionPerformed(evt);
+                setEch1ActionPerformed(evt);
             }
         });
 
-        jButton10.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jButton10.setForeground(new java.awt.Color(255, 0, 0));
-        jButton10.setText("Set");
-        jButton10.addActionListener(new java.awt.event.ActionListener() {
+        setEch2.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        setEch2.setForeground(new java.awt.Color(255, 0, 0));
+        setEch2.setText("Set");
+        setEch2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton10ActionPerformed(evt);
+                setEch2ActionPerformed(evt);
             }
         });
 
-        jButton11.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jButton11.setForeground(new java.awt.Color(255, 0, 0));
-        jButton11.setText("Set");
-        jButton11.addActionListener(new java.awt.event.ActionListener() {
+        setEch3.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        setEch3.setForeground(new java.awt.Color(255, 0, 0));
+        setEch3.setText("Set");
+        setEch3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton11ActionPerformed(evt);
+                setEch3ActionPerformed(evt);
             }
         });
 
-        jLabel8.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel8.setForeground(new java.awt.Color(51, 51, 255));
-        jLabel8.setText("jLabel2");
+        compteurEch1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        compteurEch1.setForeground(new java.awt.Color(51, 51, 255));
+        compteurEch1.setText("jLabel2");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -581,33 +538,33 @@ public class Interface extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(compteurEch3, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(compteurEch2, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(statutEch3, javax.swing.GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE)
                             .addComponent(statutEch2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(42, 42, 42)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jButton3, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jButton7, javax.swing.GroupLayout.Alignment.TRAILING))
+                            .addComponent(resetEch2, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(resetEch3, javax.swing.GroupLayout.Alignment.TRAILING))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField3)
-                            .addComponent(jTextField2)))
+                            .addComponent(setBoxEch3)
+                            .addComponent(setBoxEch2)))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(compteurEch1, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(statutsEch1, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(36, 36, 36)
-                        .addComponent(jButton1)
+                        .addComponent(ResetEch1)
                         .addGap(18, 18, 18)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE)))
+                        .addComponent(setBoxEch1, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE)))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton9)
-                    .addComponent(jButton10)
-                    .addComponent(jButton11))
+                    .addComponent(setEch1)
+                    .addComponent(setEch2)
+                    .addComponent(setEch3))
                 .addGap(32, 32, 32))
         );
         jPanel2Layout.setVerticalGroup(
@@ -616,30 +573,30 @@ public class Interface extends javax.swing.JFrame {
                 .addGap(32, 32, 32)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(statutsEch1, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton9)
-                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(ResetEch1)
+                    .addComponent(setEch1)
+                    .addComponent(compteurEch1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(setBoxEch1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(compteurEch2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(statutEch2, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton3)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton10))
+                    .addComponent(resetEch2)
+                    .addComponent(setBoxEch2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(setEch2))
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(compteurEch3, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(statutEch3, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jButton11)
+                            .addComponent(setEch3)
                             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jButton7)
-                                .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(resetEch3)
+                                .addComponent(setBoxEch3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addContainerGap())))
         );
 
@@ -650,8 +607,8 @@ public class Interface extends javax.swing.JFrame {
             }
         });
 
-        jLabel3.setMaximumSize(new java.awt.Dimension(50, 50));
-        jLabel3.setMinimumSize(new java.awt.Dimension(50, 50));
+        pictoSequence2.setMaximumSize(new java.awt.Dimension(50, 50));
+        pictoSequence2.setMinimumSize(new java.awt.Dimension(50, 50));
 
         btnPause.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         btnPause.setText("PAUSE");
@@ -661,8 +618,8 @@ public class Interface extends javax.swing.JFrame {
             }
         });
 
-        jLabel6.setMaximumSize(new java.awt.Dimension(50, 50));
-        jLabel6.setMinimumSize(new java.awt.Dimension(50, 50));
+        pictoSequence.setMaximumSize(new java.awt.Dimension(50, 50));
+        pictoSequence.setMinimumSize(new java.awt.Dimension(50, 50));
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -675,9 +632,9 @@ public class Interface extends javax.swing.JFrame {
                 .addGap(25, 25, 25))
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(21, 21, 21)
-                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(pictoSequence2, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(pictoSequence, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(57, 57, 57))
         );
         jPanel3Layout.setVerticalGroup(
@@ -686,35 +643,35 @@ public class Interface extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(pictoSequence, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(btnPause, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(pictoSequence2, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(btnStart, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
 
-        jButton8.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jButton8.setForeground(new java.awt.Color(255, 0, 51));
-        jButton8.setText("FERMER");
-        jButton8.addActionListener(new java.awt.event.ActionListener() {
+        btnFermeture.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        btnFermeture.setForeground(new java.awt.Color(255, 0, 51));
+        btnFermeture.setText("FERMER");
+        btnFermeture.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton8ActionPerformed(evt);
+                btnFermetureActionPerformed(evt);
             }
         });
 
-        jButton12.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jButton12.setForeground(new java.awt.Color(0, 153, 51));
-        jButton12.setText("Sauvegardes");
-        jButton12.addActionListener(new java.awt.event.ActionListener() {
+        btnSauvegardes.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        btnSauvegardes.setForeground(new java.awt.Color(0, 153, 51));
+        btnSauvegardes.setText("Sauvegardes");
+        btnSauvegardes.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton12ActionPerformed(evt);
+                btnSauvegardesActionPerformed(evt);
             }
         });
 
-        jTextField4.setText("<nom fichier>");
+        fileNameBox.setText("<nom fichier>");
 
         btnValidationConfig.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         btnValidationConfig.setText("Valider");
@@ -724,7 +681,7 @@ public class Interface extends javax.swing.JFrame {
             }
         });
 
-        jTextField5.setText("1");
+        periodeSauvegarde.setText("1");
 
         bntAnnulationConfig.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         bntAnnulationConfig.setText("Annuler");
@@ -741,7 +698,7 @@ public class Interface extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(423, 423, 423)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(449, Short.MAX_VALUE))
+                .addContainerGap(443, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1054, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -752,17 +709,17 @@ public class Interface extends javax.swing.JFrame {
                         .addGap(21, 21, 21)
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(207, 207, 207)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(titre, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jTextField5)
-                    .addComponent(jTextField4)
-                    .addComponent(jButton12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(periodeSauvegarde)
+                    .addComponent(fileNameBox)
+                    .addComponent(btnSauvegardes, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnFermeture, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnValidationConfig, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(bntAnnulationConfig, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(63, 63, 63))
@@ -774,25 +731,25 @@ public class Interface extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(27, 27, 27)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jButton8)
-                            .addComponent(jLabel1))
+                            .addComponent(btnFermeture)
+                            .addComponent(titre))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton12, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnSauvegardes, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(fileNameBox, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(periodeSauvegarde, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(btnValidationConfig, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(bntAnnulationConfig, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 11, Short.MAX_VALUE)
+                        .addGap(0, 9, Short.MAX_VALUE)
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 76, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 72, Short.MAX_VALUE)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(90, 90, 90)
+                        .addGap(96, 96, 96)
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(53, 53, 53)))
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -818,12 +775,12 @@ public class Interface extends javax.swing.JFrame {
                 test_on = true;
                 test_off = false;
 
-                jLabel8.setText("0");
-                jLabel2.setText("0");
-                jLabel4.setText("0");
-                jTextField1.setText("");
-                jTextField2.setText("");
-                jTextField3.setText("");
+                compteurEch1.setText("0");
+                compteurEch2.setText("0");
+                compteurEch3.setText("0");
+                setBoxEch1.setText("");
+                setBoxEch2.setText("");
+                setBoxEch3.setText("");
                 compteur1 = 0;
                 compteur2 = 0;
                 compteur3 = 0;
@@ -843,7 +800,7 @@ public class Interface extends javax.swing.JFrame {
 
                     } else {
 
-                        jLabel8.setForeground(Color.GRAY);
+                        compteurEch1.setForeground(Color.GRAY);
                         echantiilons[0] = false;
                         actifs[0] = false;
                         config = "!0:";
@@ -857,7 +814,7 @@ public class Interface extends javax.swing.JFrame {
 
                     } else {
 
-                        jLabel2.setForeground(Color.GRAY);
+                        compteurEch2.setForeground(Color.GRAY);
                         echantiilons[1] = false;
                         actifs[1] = false;
                         config = config + "0:";
@@ -871,7 +828,7 @@ public class Interface extends javax.swing.JFrame {
 
                     } else {
 
-                        jLabel4.setForeground(Color.GRAY);
+                        compteurEch3.setForeground(Color.GRAY);
                         echantiilons[2] = false;
                         actifs[2] = false;
                         config = config + "0";
@@ -902,7 +859,7 @@ public class Interface extends javax.swing.JFrame {
 
                     envoyerData(marche);
 
-                    jLabel3.setIcon(new ImageIcon(imageOn));
+                    pictoSequence2.setIcon(new ImageIcon(imageOn));
                     btnStart.setText("STOP");
                     btnPause.setVisible(true);
                     btnPause.setText("PAUSE");
@@ -915,14 +872,14 @@ public class Interface extends javax.swing.JFrame {
                 test_on = false;
                 test_off = true;
                 envoyerData(arret);
-                jLabel3.setIcon(new ImageIcon(imageRoff));
+                pictoSequence2.setIcon(new ImageIcon(imageRoff));
                 btnStart.setText("START");
                 btnPause.setVisible(false);
-                jLabel6.setVisible(false);
+                pictoSequence.setVisible(false);
                 infoText.setText("Test interrompu!");
                 gestionEnregistrement();
                 nomFichierInit = false;
-                jTextField4.setText("<nom fichier>");
+                fileNameBox.setText("<nom fichier>");
 
                 try {
                     Sortie.close();
@@ -962,10 +919,10 @@ public class Interface extends javax.swing.JFrame {
             test_on = true;
             test_off = false;
 
-            jLabel3.setVisible(false);
+            pictoSequence2.setVisible(false);
             btnStart.setVisible(false);
-            jLabel6.setVisible(true);
-            jLabel6.setIcon(new ImageIcon(imageOff));
+            pictoSequence.setVisible(true);
+            pictoSequence.setIcon(new ImageIcon(imageOff));
             jLabel5.setVisible(true);
             btnPause.setVisible(true);
             btnPause.setText("RELANCER");
@@ -979,11 +936,11 @@ public class Interface extends javax.swing.JFrame {
             test_off = false;
 
             btnStart.setVisible(true);
-            jLabel3.setVisible(true);
-            jLabel3.setIcon(new ImageIcon(imageOn));
+            pictoSequence2.setVisible(true);
+            pictoSequence2.setIcon(new ImageIcon(imageOn));
             btnStart.setText("STOP");
 
-            jLabel6.setVisible(false);
+            pictoSequence.setVisible(false);
             btnPause.setVisible(true);
             btnPause.setText("PAUSE");
             //jTextArea1.setText("Reprise du test après interruption!");
@@ -1000,11 +957,11 @@ public class Interface extends javax.swing.JFrame {
         this.connect();
     }//GEN-LAST:event_bntConnexionActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void resetEch2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetEch2ActionPerformed
         envoyerData(RAZ2);
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_resetEch2ActionPerformed
 
-    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
+    private void btnFermetureActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFermetureActionPerformed
 
         JOptionPane.showMessageDialog(this, "Voulez-vous fermer ce programme?", "Fermeture programme", JOptionPane.INFORMATION_MESSAGE);
         try {
@@ -1027,55 +984,55 @@ public class Interface extends javax.swing.JFrame {
         }
         System.exit(0);
 
-    }//GEN-LAST:event_jButton8ActionPerformed
+    }//GEN-LAST:event_btnFermetureActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void ResetEch1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ResetEch1ActionPerformed
 
         envoyerData(RAZ1);
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_ResetEch1ActionPerformed
 
-    private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
+    private void setEch1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setEch1ActionPerformed
 
-        String compteur1 = jTextField1.getText();
+        String compteur1 = setBoxEch1.getText();
         compteur1 = "#1:" + compteur1;
         envoyerData(compteur1);
 
-    }//GEN-LAST:event_jButton9ActionPerformed
+    }//GEN-LAST:event_setEch1ActionPerformed
 
-    private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
+    private void setEch2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setEch2ActionPerformed
 
-        String compteur2 = jTextField2.getText();
+        String compteur2 = setBoxEch2.getText();
         compteur2 = "#2:" + compteur2;
         envoyerData(compteur2);
-    }//GEN-LAST:event_jButton10ActionPerformed
+    }//GEN-LAST:event_setEch2ActionPerformed
 
-    private void jButton12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton12ActionPerformed
+    private void btnSauvegardesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSauvegardesActionPerformed
 
         if (!test_on) {
 
-            jTextField4.setVisible(true);
+            fileNameBox.setVisible(true);
             btnValidationConfig.setVisible(true);
-            jButton12.setVisible(false);
-            jTextField5.setVisible(true);
+            btnSauvegardes.setVisible(false);
+            periodeSauvegarde.setVisible(true);
             bntAnnulationConfig.setVisible(false);
 
         } else {
 
-            jTextField4.setVisible(false);
+            fileNameBox.setVisible(false);
             btnValidationConfig.setVisible(true);
-            jButton12.setVisible(false);
-            jTextField5.setVisible(true);
+            btnSauvegardes.setVisible(false);
+            periodeSauvegarde.setVisible(true);
             bntAnnulationConfig.setVisible(true);
         }
 
 
-    }//GEN-LAST:event_jButton12ActionPerformed
+    }//GEN-LAST:event_btnSauvegardesActionPerformed
 
     private void btnValidationConfigActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnValidationConfigActionPerformed
 
         if (!test_on) {
 
-            nomFichier = jTextField4.getText();
+            nomFichier = fileNameBox.getText();
             System.out.println("Nom de fichier choisi: " + nomFichier);
             int showOpenDialog = SelectFichier.showOpenDialog(this);
 
@@ -1099,24 +1056,24 @@ public class Interface extends javax.swing.JFrame {
 
     private void bntAnnulationConfigActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntAnnulationConfigActionPerformed
 
-        jTextField5.setVisible(false);
+        periodeSauvegarde.setVisible(false);
         bntAnnulationConfig.setVisible(false);
         btnValidationConfig.setVisible(false);
-        jButton12.setVisible(true);
+        btnSauvegardes.setVisible(true);
 
     }//GEN-LAST:event_bntAnnulationConfigActionPerformed
 
-    private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
+    private void setEch3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setEch3ActionPerformed
 
-        String compteur3 = jTextField3.getText();
+        String compteur3 = setBoxEch3.getText();
         compteur3 = "#3:" + compteur3;
         envoyerData(compteur3);
 
-    }//GEN-LAST:event_jButton11ActionPerformed
+    }//GEN-LAST:event_setEch3ActionPerformed
 
-    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+    private void resetEch3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetEch3ActionPerformed
         envoyerData(RAZ3);
-    }//GEN-LAST:event_jButton7ActionPerformed
+    }//GEN-LAST:event_resetEch3ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1154,165 +1111,46 @@ public class Interface extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton ResetEch1;
     private javax.swing.JFileChooser SelectFichier;
     private javax.swing.JButton bntAnnulationConfig;
     private javax.swing.JButton bntConnexion;
+    private javax.swing.JButton btnFermeture;
     private javax.swing.JButton btnPause;
+    private javax.swing.JButton btnSauvegardes;
     private javax.swing.JButton btnStart;
     private javax.swing.JButton btnValidationConfig;
+    private javax.swing.JLabel compteurEch1;
+    private javax.swing.JLabel compteurEch2;
+    private javax.swing.JLabel compteurEch3;
+    private javax.swing.JTextField fileNameBox;
     private javax.swing.JTextArea infoText;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton10;
-    private javax.swing.JButton jButton11;
-    private javax.swing.JButton jButton12;
-    private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton7;
-    private javax.swing.JButton jButton8;
-    private javax.swing.JButton jButton9;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
+    private javax.swing.JTextField periodeSauvegarde;
+    private javax.swing.JLabel pictoSequence;
+    private javax.swing.JLabel pictoSequence2;
     private javax.swing.JComboBox<String> portSelection;
+    private javax.swing.JButton resetEch2;
+    private javax.swing.JButton resetEch3;
+    private javax.swing.JTextField setBoxEch1;
+    private javax.swing.JTextField setBoxEch2;
+    private javax.swing.JTextField setBoxEch3;
+    private javax.swing.JButton setEch1;
+    private javax.swing.JButton setEch2;
+    private javax.swing.JButton setEch3;
     private javax.swing.JCheckBox statutEch2;
     private javax.swing.JCheckBox statutEch3;
     private javax.swing.JCheckBox statutsEch1;
+    private javax.swing.JLabel titre;
     // End of variables declaration//GEN-END:variables
 
-    /*
-    @Override
-    public void serialEvent(SerialPortEvent oEvent) {
-        if (oEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
-
-            try {
-
-                System.out.println("Réception message");
-                inputLine = input.readLine();
-                System.out.println(inputLine);
-                infoText.setText(inputLine);
-                boolean isCompteur;
-                boolean isActifs;
-                boolean isArret;
-
-                isCompteur = inputLine.startsWith("@TOTAL");
-                isActifs = inputLine.startsWith("@ACTIFS:");
-                isArret = inputLine.startsWith("@ARRET");
-                if (isCompteur) {
-
-                    String[] recept = inputLine.split(" ");
-                    String compteur = recept[3];
-                    String ech = recept[2];
-                    System.out.println("num echantillon: " + recept[2]);
-                    System.out.println("Compteur: " + recept[3]);
-
-                    if (ech.equals("#1:")) {
-
-                        jLabel8.setText(compteur);
-                        compteur1 = Long.parseLong(compteur);
-
-                    }
-
-                    if (ech.equals("#2:")) {
-
-                        jLabel2.setText(compteur);
-                        compteur2 = Long.parseLong(compteur);
-                    }
-
-                    if (ech.equals("#3:")) {
-
-                        jLabel4.setText(compteur);
-                        compteur3 = Long.parseLong(compteur);
-
-                    }
-
-                }
-
-                if (inputLine.equals("@SEQ")) {
-
-                    nbr_seqs++;
-
-                    if (nbr_seqs == interval) {
-
-                        gestionEnregistrement();
-
-                    }
-
-                }
-
-                if (isActifs) {
-
-                    String[] recept = inputLine.split(":");
-
-                    if (recept[1].equals("0")) {
-
-                        actifs[0] = false;
-                        if (statutsEch1.isSelected()) {
-                            jLabel8.setForeground(Color.RED);
-                            jLabel8.setText(String.valueOf(compteur1));
-                        }
-
-                    } else {
-
-                        actifs[0] = true;
-                    }
-
-                    if (recept[2].equals("0")) {
-
-                        actifs[1] = false;
-                        if (statutEch2.isSelected()) {
-                            jLabel2.setForeground(Color.RED);
-                            jLabel2.setText(String.valueOf(compteur2));
-                        }
-
-                    } else {
-
-                        actifs[1] = true;
-                    }
-
-                    if (recept[3].equals("0")) {
-
-                        actifs[2] = false;
-                        if (statutEch3.isSelected()) {
-                            jLabel4.setForeground(Color.RED);
-                            jLabel4.setText(String.valueOf(compteur3));
-                        }
-
-                    } else {
-
-                        actifs[2] = true;
-                    }
-
-                }   // fin  if (isActifs)
-
-                if (isArret) {
-
-                    arret_valide = true;
-                }
-
-            } catch (Exception e) {   // Traitement des exceptions
-
-                System.err.println(e.toString());
-            }
-
-        }
-    }
-    
-    */
-
+ 
     public void initFichier() {
 
         // Initialisation flux de sortie
@@ -1359,7 +1197,7 @@ public class Interface extends javax.swing.JFrame {
 
     private void enregisterInterval() {
 
-        String choixInterval = jTextField5.getText();
+        String choixInterval = periodeSauvegarde.getText();
 
         try {
             interval = Integer.parseInt(choixInterval);
@@ -1370,10 +1208,10 @@ public class Interface extends javax.swing.JFrame {
                 System.out.println(Repertoire);
                 System.out.println("nom fichier complet: " + nomFichier);
                 initFichier();
-                jTextField4.setVisible(false);
+                fileNameBox.setVisible(false);
                 btnValidationConfig.setVisible(false);
-                jTextField5.setVisible(false);
-                jButton12.setVisible(true);
+                periodeSauvegarde.setVisible(false);
+                btnSauvegardes.setVisible(true);
                 bntAnnulationConfig.setVisible(false);
                 infoText.setText("Les fichiers de résultats seront sauvegardés dans le fichier: " + nomFichier);
                 initFichier();
