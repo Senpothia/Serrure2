@@ -752,8 +752,8 @@ public class Interface extends javax.swing.JFrame {
                         .addGap(96, 96, 96)
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(53, 53, 53)))
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(19, 19, 19))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(29, 29, 29))
         );
 
         pack();
@@ -1162,6 +1162,10 @@ public class Interface extends javax.swing.JFrame {
             Sortie.newLine();
 
         } catch (Exception ex) {
+            
+           // System.err.println("Erreur création de fichier de sauvegarde");
+           // System.err.println(ex);
+            montrerError("Accès refusé!");
 
         }
 
