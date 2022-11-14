@@ -129,7 +129,7 @@ public class Interface extends javax.swing.JFrame {
 
     public void connect() {
 
-      //  System.out.println("Terminal.btnConnexionActionPerformed()");
+        //  System.out.println("Terminal.btnConnexionActionPerformed()");
         try {
             SerialPort[] ports = SerialPort.getCommPorts();
             portComm = ports[portSelection.getSelectedIndex()];
@@ -178,27 +178,31 @@ public class Interface extends javax.swing.JFrame {
                     int numRead = portComm.readBytes(readBuffer,
                             readBuffer.length);
 
-                //    System.out.print("Read " + numRead + " bytes -");
-
+                    // System.out.print("Read " + numRead + " bytes -");
                     //Convert bytes to String
                     inputLine = new String(readBuffer, StandardCharsets.UTF_8);
+                    infoText.setForeground(Color.BLUE);
                     infoText.setText(inputLine);
-               //     System.out.println("Received -> " + inputLine);
+                   // System.out.println("Received -> " + inputLine);
 
                     boolean isCompteur;
                     boolean isActifs;
                     boolean isArret;
 
                     isCompteur = inputLine.startsWith("@TOTAL");
-                    isActifs = inputLine.startsWith("@ACTIFS:");
+                    isActifs = inputLine.startsWith("@ACTIFS");
                     isArret = inputLine.startsWith("@ARRET");
+                   // System.out.println("isCompteur: " + isCompteur);
+                   // System.out.println("isActif: " + isActifs);
+                   // System.out.println("isArret: " + isArret);
+
                     if (isCompteur) {
 
                         String[] recept = inputLine.split(" ");
                         String compteur = recept[3];
                         String ech = recept[2];
-                      //  System.out.println("num echantillon: " + recept[2]);
-                      //  System.out.println("Compteur: " + recept[3]);
+                        //  System.out.println("num echantillon: " + recept[2]);
+                        //  System.out.println("Compteur: " + recept[3]);
 
                         if (ech.equals("#1:")) {
 
@@ -222,13 +226,15 @@ public class Interface extends javax.swing.JFrame {
 
                     }
 
-                    if (inputLine.equals("@SEQ")) {
-
+                    if (inputLine.startsWith("@SEQ")) {
+                       // System.out.println("log: Fin de sequence: @SEQ");
                         nbr_seqs++;
 
                         if (nbr_seqs == interval) {
 
                             gestionEnregistrement();
+                            infoText.setForeground(Color.orange);
+                            infoText.setText("Fin de séquence");
 
                         }
 
@@ -282,6 +288,8 @@ public class Interface extends javax.swing.JFrame {
                     if (isArret) {
 
                         arret_valide = true;
+                        infoText.setForeground(Color.RED);
+                        infoText.setText("FIN DE SEQUENCE - TEST TERMINE!");
                     }
 
                 } catch (Exception e) {   // Traitement des exceptions
@@ -295,10 +303,10 @@ public class Interface extends javax.swing.JFrame {
     private void envoyerData(String dataToSend) {
 
         outputStream = portComm.getOutputStream();
-       
+
         try {
 
-        //    System.out.println("Interface.envoyerData(), données: " + dataToSend);
+            //    System.out.println("Interface.envoyerData(), données: " + dataToSend);
             outputStream.write(dataToSend.getBytes());
 
         } catch (IOException e) {
@@ -696,9 +704,9 @@ public class Interface extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(423, 423, 423)
+                .addGap(417, 417, 417)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(443, Short.MAX_VALUE))
+                .addContainerGap(449, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1054, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -751,9 +759,9 @@ public class Interface extends javax.swing.JFrame {
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(96, 96, 96)
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(53, 53, 53)))
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(29, 29, 29))
+                        .addGap(25, 25, 25)))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         pack();
@@ -834,7 +842,7 @@ public class Interface extends javax.swing.JFrame {
                         config = config + "0";
                     }
 
-                   // System.out.println("Configuration de test: " + config);
+                    // System.out.println("Configuration de test: " + config);
                     envoyerData(config);
 
                     boolean timeout = false;
@@ -1033,7 +1041,7 @@ public class Interface extends javax.swing.JFrame {
         if (!test_on) {
 
             nomFichier = fileNameBox.getText();
-          //  System.out.println("Nom de fichier choisi: " + nomFichier);
+            //  System.out.println("Nom de fichier choisi: " + nomFichier);
             int showOpenDialog = SelectFichier.showOpenDialog(this);
 
             if (nomFichier.equals("") || nomFichier.equals("<nom fichier>")) {
@@ -1150,7 +1158,6 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JLabel titre;
     // End of variables declaration//GEN-END:variables
 
- 
     public void initFichier() {
 
         // Initialisation flux de sortie
@@ -1162,9 +1169,9 @@ public class Interface extends javax.swing.JFrame {
             Sortie.newLine();
 
         } catch (Exception ex) {
-            
-           // System.err.println("Erreur création de fichier de sauvegarde");
-           // System.err.println(ex);
+
+            // System.err.println("Erreur création de fichier de sauvegarde");
+            // System.err.println(ex);
             montrerError("Accès refusé!");
 
         }
@@ -1209,8 +1216,8 @@ public class Interface extends javax.swing.JFrame {
 
                 Repertoire = SelectFichier.getSelectedFile();
                 nomFichier = Repertoire + "\\" + nomFichier + ".csv";
-              //  System.out.println(Repertoire);
-              //  System.out.println("nom fichier complet: " + nomFichier);
+                //  System.out.println(Repertoire);
+                //  System.out.println("nom fichier complet: " + nomFichier);
                 initFichier();
                 fileNameBox.setVisible(false);
                 btnValidationConfig.setVisible(false);

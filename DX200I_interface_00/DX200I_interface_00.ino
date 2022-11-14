@@ -279,7 +279,7 @@ erreurs[i] = true;
 actifs[i] = false;
 //ERREUR0++;
 //erreurEnCours = true;
-Serial.println("@:Erreur sensor - Ech:" + String(i+1));
+Serial.println("@:Erreur sensor - Ech:" + String(i+1) + " ");
 //start = false;
 sonorite = true;
 //sortieERREUR();
@@ -294,7 +294,7 @@ erreurs[i] = true;
 actifs[i] = false;
 //if(!erreurEnCours){ERREUR0++;}
 
-Serial.println("@:Erreur contact porte - Ech:" + String(i+1));
+Serial.println("@:Erreur contact porte - Ech:" + String(i+1) + " ");
 //start = false;
 sonorite = true;
 //sortieERREUR();
@@ -312,9 +312,11 @@ Serial.println(info);
  
 
   }
-
-  Serial.println("@SEQ");
+  delay(3000);
   transfertActifs();
+  Serial.println("@SEQ");
+  delay(1000); 
+  //transfertActifs();
   
   }
 
@@ -341,5 +343,6 @@ Serial.println(info);
     }
   
   Serial.println(listeActifs);
+  delay(5000); 
   
   }
