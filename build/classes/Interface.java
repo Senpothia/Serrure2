@@ -70,7 +70,7 @@ public class Interface extends javax.swing.JFrame {
     private String ligneEnCours;
 
     // Variables de séquence de test
-    private boolean[] echantiilons = {false, false, false};
+    private boolean[] echantillons = {false, false, false};
     private long[] totaux = {0, 0, 0};
     private boolean[] erreurs = {false, false, false};
     private boolean[] actifs = {false, false, false};
@@ -107,7 +107,7 @@ public class Interface extends javax.swing.JFrame {
         compteurEch1.setText("0");
         compteurEch2.setText("0");
         compteurEch3.setText("0");
-        statutsEch1.setSelected(false);
+        statutEch1.setSelected(false);
         statutEch2.setSelected(false);
         statutEch3.setSelected(false);
         fileNameBox.setVisible(false);
@@ -183,7 +183,7 @@ public class Interface extends javax.swing.JFrame {
                     inputLine = new String(readBuffer, StandardCharsets.UTF_8);
                     infoText.setForeground(Color.BLUE);
                     infoText.setText(inputLine);
-                   // System.out.println("Received -> " + inputLine);
+                    System.out.println("Received -> " + inputLine);
 
                     boolean isCompteur;
                     boolean isActifs;
@@ -192,9 +192,9 @@ public class Interface extends javax.swing.JFrame {
                     isCompteur = inputLine.startsWith("@TOTAL");
                     isActifs = inputLine.startsWith("@ACTIFS");
                     isArret = inputLine.startsWith("@ARRET");
-                   // System.out.println("isCompteur: " + isCompteur);
-                   // System.out.println("isActif: " + isActifs);
-                   // System.out.println("isArret: " + isArret);
+                    System.out.println("isCompteur: " + isCompteur);
+                    System.out.println("isActif: " + isActifs);
+                    System.out.println("isArret: " + isArret);
 
                     if (isCompteur) {
 
@@ -227,7 +227,7 @@ public class Interface extends javax.swing.JFrame {
                     }
 
                     if (inputLine.startsWith("@SEQ")) {
-                       // System.out.println("log: Fin de sequence: @SEQ");
+                        System.out.println("log: Fin de sequence: @SEQ");
                         nbr_seqs++;
 
                         if (nbr_seqs == interval) {
@@ -244,10 +244,17 @@ public class Interface extends javax.swing.JFrame {
 
                         String[] recept = inputLine.split(":");
 
+                        System.out.println("traitement actifs");
+                        for (int i = 0; i < 4; i++) {
+
+                            System.out.println("recept num: "+ i + " " + recept[i]);
+
+                        }
                         if (recept[1].equals("0")) {
 
+                            System.out.println("recept1: " + recept[1]);
                             actifs[0] = false;
-                            if (statutsEch1.isSelected()) {
+                            if (statutEch1.isSelected()) {
                                 compteurEch1.setForeground(Color.RED);
                                 compteurEch1.setText(String.valueOf(compteur1));
                             }
@@ -258,7 +265,7 @@ public class Interface extends javax.swing.JFrame {
                         }
 
                         if (recept[2].equals("0")) {
-
+                            System.out.println("recept2: " + recept[2]);
                             actifs[1] = false;
                             if (statutEch2.isSelected()) {
                                 compteurEch2.setForeground(Color.RED);
@@ -270,8 +277,9 @@ public class Interface extends javax.swing.JFrame {
                             actifs[1] = true;
                         }
 
-                        if (recept[3].equals("0")) {
+                        if (recept[3].startsWith("0")) {
 
+                            System.out.println("recept3: " + recept[3]);
                             actifs[2] = false;
                             if (statutEch3.isSelected()) {
                                 compteurEch3.setForeground(Color.RED);
@@ -362,7 +370,7 @@ public class Interface extends javax.swing.JFrame {
         bntConnexion = new javax.swing.JButton();
         portSelection = new javax.swing.JComboBox<>();
         jPanel2 = new javax.swing.JPanel();
-        statutsEch1 = new javax.swing.JCheckBox();
+        statutEch1 = new javax.swing.JCheckBox();
         compteurEch2 = new javax.swing.JLabel();
         statutEch3 = new javax.swing.JCheckBox();
         compteurEch3 = new javax.swing.JLabel();
@@ -446,11 +454,11 @@ public class Interface extends javax.swing.JFrame {
                 .addGap(33, 33, 33))
         );
 
-        statutsEch1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        statutsEch1.setText("Echantillon1");
-        statutsEch1.addActionListener(new java.awt.event.ActionListener() {
+        statutEch1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        statutEch1.setText("Echantillon 1");
+        statutEch1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                statutsEch1ActionPerformed(evt);
+                statutEch1ActionPerformed(evt);
             }
         });
 
@@ -459,7 +467,7 @@ public class Interface extends javax.swing.JFrame {
         compteurEch2.setText("jLabel2");
 
         statutEch3.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        statutEch3.setText("Echantillon3");
+        statutEch3.setText("Echantillon 3");
         statutEch3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 statutEch3ActionPerformed(evt);
@@ -472,7 +480,7 @@ public class Interface extends javax.swing.JFrame {
 
         statutEch2.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         statutEch2.setSelected(true);
-        statutEch2.setText("Echantillon2");
+        statutEch2.setText("Echantillon 2");
         statutEch2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 statutEch2ActionPerformed(evt);
@@ -550,7 +558,7 @@ public class Interface extends javax.swing.JFrame {
                             .addComponent(compteurEch2, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(statutEch3, javax.swing.GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE)
+                            .addComponent(statutEch3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(statutEch2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(42, 42, 42)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -563,7 +571,7 @@ public class Interface extends javax.swing.JFrame {
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(compteurEch1, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(statutsEch1, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(statutEch1, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(36, 36, 36)
                         .addComponent(ResetEch1)
                         .addGap(18, 18, 18)
@@ -580,7 +588,7 @@ public class Interface extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(32, 32, 32)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(statutsEch1, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(statutEch1, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(ResetEch1)
                     .addComponent(setEch1)
                     .addComponent(compteurEch1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -708,10 +716,6 @@ public class Interface extends javax.swing.JFrame {
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(449, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1054, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(49, 49, 49))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(21, 21, 21)
@@ -731,6 +735,10 @@ public class Interface extends javax.swing.JFrame {
                     .addComponent(btnValidationConfig, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(bntAnnulationConfig, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(63, 63, 63))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1054, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(39, 39, 39))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -759,9 +767,9 @@ public class Interface extends javax.swing.JFrame {
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(96, 96, 96)
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(25, 25, 25)))
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                        .addGap(31, 31, 31)))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(45, 45, 45))
         );
 
         pack();
@@ -793,51 +801,51 @@ public class Interface extends javax.swing.JFrame {
                 compteur2 = 0;
                 compteur3 = 0;
 
-                if (!statutsEch1.isSelected() && !statutEch2.isSelected() && !statutEch3.isSelected()) {
+                if (!statutEch1.isSelected() && !statutEch2.isSelected() && !statutEch3.isSelected()) {
 
                     test_on = false;
                     montrerErrorConfig("Défaut de configuration");
 
                 } else {
                     //*************************
-                    if (statutsEch1.isSelected()) {
+                    if (statutEch1.isSelected()) {
 
-                        echantiilons[0] = true;
+                        echantillons[0] = true;
                         actifs[0] = true;
                         config = "!1:";
 
                     } else {
 
                         compteurEch1.setForeground(Color.GRAY);
-                        echantiilons[0] = false;
+                        echantillons[0] = false;
                         actifs[0] = false;
                         config = "!0:";
                     }
 
                     if (statutEch2.isSelected()) {
 
-                        echantiilons[1] = true;
+                        echantillons[1] = true;
                         actifs[1] = true;
                         config = config + "1:";
 
                     } else {
 
                         compteurEch2.setForeground(Color.GRAY);
-                        echantiilons[1] = false;
+                        echantillons[1] = false;
                         actifs[1] = false;
                         config = config + "0:";
                     }
 
                     if (statutEch3.isSelected()) {
 
-                        echantiilons[2] = true;
+                        echantillons[2] = true;
                         actifs[2] = true;
                         config = config + "1";
 
                     } else {
 
                         compteurEch3.setForeground(Color.GRAY);
-                        echantiilons[2] = false;
+                        echantillons[2] = false;
                         actifs[2] = false;
                         config = config + "0";
                     }
@@ -901,10 +909,10 @@ public class Interface extends javax.swing.JFrame {
 
     }//GEN-LAST:event_btnStartActionPerformed
 
-    private void statutsEch1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_statutsEch1ActionPerformed
+    private void statutEch1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_statutEch1ActionPerformed
 
 
-    }//GEN-LAST:event_statutsEch1ActionPerformed
+    }//GEN-LAST:event_statutEch1ActionPerformed
 
     private void statutEch2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_statutEch2ActionPerformed
 
@@ -1152,9 +1160,9 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JButton setEch1;
     private javax.swing.JButton setEch2;
     private javax.swing.JButton setEch3;
+    private javax.swing.JCheckBox statutEch1;
     private javax.swing.JCheckBox statutEch2;
     private javax.swing.JCheckBox statutEch3;
-    private javax.swing.JCheckBox statutsEch1;
     private javax.swing.JLabel titre;
     // End of variables declaration//GEN-END:variables
 

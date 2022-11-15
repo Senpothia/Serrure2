@@ -65,11 +65,6 @@
               <EmptySpace pref="449" max="32767" attributes="0"/>
           </Group>
           <Group type="102" alignment="1" attributes="0">
-              <EmptySpace max="32767" attributes="0"/>
-              <Component id="jScrollPane1" min="-2" pref="1054" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="49" max="-2" attributes="0"/>
-          </Group>
-          <Group type="102" alignment="1" attributes="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
@@ -93,6 +88,11 @@
                   <Component id="bntAnnulationConfig" max="32767" attributes="0"/>
               </Group>
               <EmptySpace min="-2" pref="63" max="-2" attributes="0"/>
+          </Group>
+          <Group type="102" alignment="1" attributes="0">
+              <EmptySpace max="32767" attributes="0"/>
+              <Component id="jScrollPane1" min="-2" pref="1054" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="39" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -125,11 +125,11 @@
                       <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="96" max="-2" attributes="0"/>
                       <Component id="jPanel3" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
                   </Group>
               </Group>
-              <Component id="jScrollPane1" min="-2" pref="75" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
+              <Component id="jScrollPane1" min="-2" pref="35" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="45" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -249,7 +249,7 @@
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                              <Component id="statutEch3" pref="139" max="32767" attributes="0"/>
+                              <Component id="statutEch3" max="32767" attributes="0"/>
                               <Component id="statutEch2" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="42" max="-2" attributes="0"/>
@@ -266,7 +266,7 @@
                       <Group type="102" attributes="0">
                           <Component id="compteurEch1" min="-2" pref="133" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="statutsEch1" min="-2" pref="145" max="-2" attributes="0"/>
+                          <Component id="statutEch1" min="-2" pref="145" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="36" max="-2" attributes="0"/>
                           <Component id="ResetEch1" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
@@ -288,7 +288,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="statutsEch1" alignment="3" min="-2" pref="42" max="-2" attributes="0"/>
+                      <Component id="statutEch1" alignment="3" min="-2" pref="42" max="-2" attributes="0"/>
                       <Component id="ResetEch1" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="setEch1" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="compteurEch1" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
@@ -327,15 +327,15 @@
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JCheckBox" name="statutsEch1">
+        <Component class="javax.swing.JCheckBox" name="statutEch1">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Tahoma" size="18" style="1"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Echantillon1"/>
+            <Property name="text" type="java.lang.String" value="Echantillon 1"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="statutsEch1ActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="statutEch1ActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="compteurEch2">
@@ -354,7 +354,7 @@
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Tahoma" size="18" style="1"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Echantillon3"/>
+            <Property name="text" type="java.lang.String" value="Echantillon 3"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="statutEch3ActionPerformed"/>
@@ -379,7 +379,7 @@
             <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
               <Connection code="true" type="code"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Echantillon2"/>
+            <Property name="text" type="java.lang.String" value="Echantillon 2"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="statutEch2ActionPerformed"/>
